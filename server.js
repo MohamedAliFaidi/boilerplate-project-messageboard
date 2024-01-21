@@ -7,9 +7,22 @@ const cors        = require('cors');
 const apiRoutes         = require('./routes/api.js');
 const fccTestingRoutes  = require('./routes/fcctesting.js');
 const runner            = require('./test-runner');
+const helmet = require('helmet')
+
 
 const app = express();
-
+app.use(helmet.frameguard({action: 'deny'}))
+app.use((req, res, next) => {
+  res.header('X-Frame-Options', 'SAMEORIGIN');
+  next();
+});
+app.use((req, res, next) => {
+  res.header('X-DNS-Prefetch-Control', 'off');
+  next();
+});app.use((req, res, next) => {
+  res.header('Referrer-Policy', 'same-origin');
+  next();
+});
 app.use('/public', express.static(process.cwd() + '/public'));
 
 app.use(cors({origin: '*'})); //For FCC testing purposes only
